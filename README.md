@@ -16,4 +16,13 @@
 	
         	return new RestTemplateBuilder().build();
     	}
-
+#use ResetClient
+	@Autowired
+	ITestRest testRest;
+	@Test
+	public void testGet() {
+		testRest.setUrl("http://www.weather.com.cn/data/sk/{id}.html");
+		Weather weather=testRest.getWeather("101010100","beijing","1111111");
+		assertNotNull(weather);
+		System.out.println(weather);
+	}
