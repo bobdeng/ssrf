@@ -28,18 +28,36 @@ public class RestInvocationHandler implements InvocationHandler {
             return null;
         }else {
             RestClient restClient=method.getAnnotation(RestClient.class);
-            if(restClient==null || restClient.method().equals(BaseRestClient.METHOD_GET)){
-                return doGet(method,args);
+            if(restClient!=null){
+                return http(restClient,method,args);
             }
             return null;
         }
     }
 
-    private Object doGet(Method method, Object[] args) {
+    private Object http(RestClient client, Method method, Object[] args) {
+        switch(client.method()){
+            case DELETE:
+                break;
+            case GET:
+                return doGet(client,method,args);
+            case POST:
+                break;
+            case PATCH:
+                break;
+            case PUT:
+                break;
+            default:
+                return doGet(client, method, args);
+        }
+        return null;
+    }
+
+    private Object doGet(RestClient client, Method method, Object[] args) {
         UriComponentsBuilder builder = rebuildUrl(method, args);
         HttpHeaders headers=getHeaders(method, args);
         HttpEntity httpEntity=new HttpEntity(headers);
-        ResponseEntity responseEntity= restTemplate.exchange(builder.build().encode().toString(), HttpMethod.GET,httpEntity,method.getReturnType(),args);
+        ResponseEntity responseEntity= restTemplate.exchange(builder.build().encode().toString(), client.method(),httpEntity,method.getReturnType(),args);
         return  responseEntity.getBody();
     }
 
@@ -59,14 +77,14 @@ public class RestInvocationHandler implements InvocationHandler {
         for(int i=0;i<args.length;i++){
             PathParam pathParam=findAnnotation(PathParam.class,method.getParameterAnnotations()[i]);
             if(pathParam!=null){
-                url=url.replace("{"+pathParam.name()+"}",args[i]==null?"":args[i].toString());
+                url=url.replace("{"+pathParam.value()+"}",args[i]==null?"":args[i].toString());
             }
         }
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
         for(int i=0;i<args.length;i++){
             Param param=findAnnotation(Param.class,method.getParameterAnnotations()[i]);
             if(param!=null){
-                builder.queryParam(param.name(),args[i]==null?"":args[i].toString());
+                builder.queryParam(param.value(),args[i]==null?"":args[i].toString());
             }
         }
         return builder;
@@ -89,7 +107,7 @@ public class RestInvocationHandler implements InvocationHandler {
     }
 
     private String replaceUrlHolder(String url, PathParam pathParam,Object value) {
-        return url.replace("{"+pathParam.name()+"}",value==null?"":value.toString());
+        return url.replace("{"+pathParam.value()+"}",value==null?"":value.toString());
     }
 
     private <T>T findAnnotation(Class<T> clz,Annotation[] annotations) {
