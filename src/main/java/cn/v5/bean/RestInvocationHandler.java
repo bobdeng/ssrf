@@ -62,12 +62,25 @@ public class RestInvocationHandler implements InvocationHandler {
         HttpHeaders headers=getHeaders(method, args);
         HttpEntity httpEntity=new HttpEntity(headers);
         ResponseEntity responseEntity= restTemplate.exchange(builder.build().encode().toString(), client.method(),httpEntity,method.getReturnType(),args);
-        return  responseEntity.getBody();
+        Object result=  responseEntity.getBody();
+        setResultHttpCode(result,responseEntity.getStatusCodeValue());
+        return result;
+    }
+    private void setResultHttpCode(Object result,int code){
+        try {
+            Field field=result.getClass().getDeclaredField("statusCode");
+            if(field!=null && field.getType()==int.class){
+                field.setAccessible(true);
+                field.set(result,code);
+            }
+        } catch (Exception e) {
+        }
     }
     private Object doPost(RestClient client, Method method, Object[] args)  {
         UriComponentsBuilder builder = rebuildUrl(method, args);
         HttpHeaders headers=getHeaders(method, args);
-        headers.setContentType(client.hasFile()?MediaType.MULTIPART_FORM_DATA:MediaType.APPLICATION_FORM_URLENCODED);
+        //only post support multipart/form-data
+        headers.setContentType((client.hasFile() && client.method()==HttpMethod.POST)?MediaType.MULTIPART_FORM_DATA:MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String,Object> body=new LinkedMultiValueMap<>();
         for(int i=0;i<args.length;i++){
             FormBody formBody=findAnnotation(FormBody.class,method.getParameterAnnotations()[i]);
@@ -76,7 +89,10 @@ public class RestInvocationHandler implements InvocationHandler {
             }
         }
         HttpEntity<MultiValueMap<String,String>> httpEntity=new HttpEntity(body,headers);
-        return restTemplate.exchange(builder.build().encode().toString(),client.method(),httpEntity,method.getReturnType()).getBody();
+        ResponseEntity responseEntity=  restTemplate.exchange(builder.build().encode().toString(),client.method(),httpEntity,method.getReturnType());
+        Object result=  responseEntity.getBody();
+        setResultHttpCode(result,responseEntity.getStatusCodeValue());
+        return result;
     }
 
     private void objectsToForm(Object arg, MultiValueMap<String, Object> body){

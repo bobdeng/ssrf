@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserInfo {
+    private int statusCode;
     private String name;
     private int age;
     private String[] tags;

@@ -20,4 +20,6 @@ public interface ITestRest extends BaseRestClient {
     UserInfo postUserWithFile(@PathParam(value = "id") String id,@FormBody UserFormWithFile form);
     @RestClient(method = HttpMethod.POST,hasFile = true)
     UserInfo postUserWithByteArray(@PathParam(value = "id") String id,@FormBody UserFormWithByteArray form);
+    @RestClient(method = HttpMethod.PUT,hasFile = false)
+    UserInfo putUser(@PathParam(value = "id") String id,@FormBody UserForm form);
 }

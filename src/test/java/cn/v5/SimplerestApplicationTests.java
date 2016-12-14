@@ -52,16 +52,7 @@ public class SimplerestApplicationTests {
 		assertEquals(user.getName(),"bobdeng");
 		assertEquals(user.getTags(),new String[]{"music","movie"});
 	}
-	private File getResourceFile(String name){
-		return new File(this.getClass().getClassLoader().getResource(name).getFile());
-	}
-	private byte[] readFile(File file)throws IOException{
-		InputStream input=new FileInputStream(file);
-		byte[] array=new byte[input.available()];
-		input.read(array);
-		input.close();
-		return array;
-	}
+
 	@Test
 	public void testPostWithByteArray() {
 		try {
@@ -78,6 +69,26 @@ public class SimplerestApplicationTests {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
+	}
+	@Test
+	public void testPut() {
+		testRest.setUrl("http://localhost:8080/put/{id}");
+		UserInfo user=testRest.putUser("123456", UserForm.builder().tags(new String[]{"music","movie"}).name("bobdeng").build());
+		assertNotNull(user);
+		assertEquals(user.getStatusCode(),200);
+		assertEquals(user.getName(),"bobdeng");
+		assertArrayEquals(user.getTags(),new String[]{"music","movie"});
+	}
+
+	private File getResourceFile(String name){
+		return new File(this.getClass().getClassLoader().getResource(name).getFile());
+	}
+	private byte[] readFile(File file)throws IOException{
+		InputStream input=new FileInputStream(file);
+		byte[] array=new byte[input.available()];
+		input.read(array);
+		input.close();
+		return array;
 	}
 
 }
