@@ -1,19 +1,23 @@
 package cn.v5.bean;
 
-import cn.v5.annotations.Header;
-import cn.v5.annotations.Param;
-import cn.v5.annotations.PathParam;
-import cn.v5.annotations.RestClient;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import cn.v5.annotations.*;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.*;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by zhiguodeng on 2016/12/13.
@@ -42,7 +46,11 @@ public class RestInvocationHandler implements InvocationHandler {
             case GET:
                 return doGet(client,method,args);
             case POST:
-                break;
+                try{
+                    return doPost(client,method,args);
+                }catch (Exception e){
+                    return null;
+                }
             case PATCH:
                 break;
             case PUT:
@@ -59,6 +67,50 @@ public class RestInvocationHandler implements InvocationHandler {
         HttpEntity httpEntity=new HttpEntity(headers);
         ResponseEntity responseEntity= restTemplate.exchange(builder.build().encode().toString(), client.method(),httpEntity,method.getReturnType(),args);
         return  responseEntity.getBody();
+    }
+    private Object doPost(RestClient client, Method method, Object[] args) throws Exception {
+        UriComponentsBuilder builder = rebuildUrl(method, args);
+        HttpHeaders headers=getHeaders(method, args);
+        headers.setContentType(client.hasFile()?MediaType.MULTIPART_FORM_DATA:MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String,Object> body=new LinkedMultiValueMap<>();
+        for(int i=0;i<args.length;i++){
+            FormBody formBody=findAnnotation(FormBody.class,method.getParameterAnnotations()[i]);
+            if(formBody!=null){
+                objectsToForm(args[i],body);
+            }
+        }
+        HttpEntity<MultiValueMap<String,String>> httpEntity=new HttpEntity(body,headers);
+        return restTemplate.exchange(builder.build().encode().toString(),client.method(),httpEntity,method.getReturnType()).getBody();
+    }
+
+    private void objectsToForm(Object arg, MultiValueMap<String, Object> body) throws Exception{
+        if(arg==null) return;
+        Field[] fields=arg.getClass().getDeclaredFields();
+        for(Field field:fields){
+            Param param=field.getAnnotation(Param.class);
+            field.setAccessible(true);
+            Object value=field.get(arg);
+            String name = param != null ? param.value() : field.getName();
+            if(field.getType().isArray()){
+                for(int i=0;i< Array.getLength(value);i++){
+                    Object arrayValue=Array.get(value,i);
+                    object2Form(name,arrayValue,body);
+                }
+            }
+            else {
+                object2Form(name,value,body);
+            }
+        }
+    }
+    private void object2Form(String name,Object arg, MultiValueMap<String, Object> body){
+        if(arg==null) return;
+        if(arg.getClass()==byte[].class){
+            body.add(name,new ByteArrayResource((byte[])arg));
+        }else if(arg.getClass()==File.class){
+            body.add(name,new FileSystemResource((File)arg));
+        }else{
+            body.add(name,arg.toString());
+        }
     }
 
     private HttpHeaders getHeaders(Method method, Object[] args) {

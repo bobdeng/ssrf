@@ -14,4 +14,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface RestClient {
     HttpMethod method();
+    boolean hasFile() default false;
 }

@@ -1,4 +1,4 @@
-package cn.v5;
+package cn.v5.model;
 
 import cn.v5.annotations.Param;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.io.File;
 
 /**
  * Created by zhiguodeng on 2016/12/13.
@@ -15,13 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Form1 {
+public class FormWithFile {
     @Param("name")
     private String name;
-    @Param("age")
-    private int age;
-    @Param("tag")
-    private List<String> tags;
-    @Param("contact")
-    private String[] contacts;
+    private String[] tags;
+    private byte[] avatarData;
+    private File file;
 }
