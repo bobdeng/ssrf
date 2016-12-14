@@ -119,3 +119,6 @@ Invoke
 			e.printStackTrace();
 		}
 	}
+##Add header
+	UserInfo getUser(@Header(value = "session_id") String sessionId);
+will add a header name is "session_id" in http header.
