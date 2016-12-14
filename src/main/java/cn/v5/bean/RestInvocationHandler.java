@@ -7,6 +7,7 @@ import org.springframework.http.*;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -58,7 +59,7 @@ public class RestInvocationHandler implements InvocationHandler {
     }
 
     private Object doGet(RestClient client, Method method, Object[] args) {
-        UriComponentsBuilder builder = rebuildUrl(method, args);
+        UriComponentsBuilder builder = rebuildUrl(client,method, args);
         HttpHeaders headers=getHeaders(method, args);
         HttpEntity httpEntity=new HttpEntity(headers);
         ResponseEntity responseEntity= restTemplate.exchange(builder.build().encode().toString(), client.method(),httpEntity,method.getReturnType(),args);
@@ -77,7 +78,7 @@ public class RestInvocationHandler implements InvocationHandler {
         }
     }
     private Object doPost(RestClient client, Method method, Object[] args)  {
-        UriComponentsBuilder builder = rebuildUrl(method, args);
+        UriComponentsBuilder builder = rebuildUrl(client,method, args);
         HttpHeaders headers=getHeaders(method, args);
         //only post support multipart/form-data
         headers.setContentType((client.hasFile() && client.method()==HttpMethod.POST)?MediaType.MULTIPART_FORM_DATA:MediaType.APPLICATION_FORM_URLENCODED);
@@ -144,8 +145,8 @@ public class RestInvocationHandler implements InvocationHandler {
         return requestHeaders;
     }
 
-    private UriComponentsBuilder rebuildUrl(Method method, Object[] args) {
-        String url =this.url.get();
+    private UriComponentsBuilder rebuildUrl(RestClient client,Method method, Object[] args) {
+        String url = StringUtils.isEmpty(client.path())?this.url.get():client.path();
         for(int i=0;i<args.length;i++){
             PathParam pathParam=findAnnotation(PathParam.class,method.getParameterAnnotations()[i]);
             if(pathParam!=null){

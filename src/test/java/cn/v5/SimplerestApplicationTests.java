@@ -25,7 +25,6 @@ public class SimplerestApplicationTests {
 	ITestRest testRest;
 	@Test
 	public void testGet() {
-		testRest.setUrl("http://localhost:8080/get/{id}");
 		UserInfo user=testRest.getUser("123456");
 		assertNotNull(user);
 		System.out.println(user);

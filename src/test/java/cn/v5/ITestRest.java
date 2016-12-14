@@ -12,7 +12,7 @@ import org.springframework.http.HttpMethod;
  * Created by zhiguodeng on 2016/12/13.
  */
 public interface ITestRest extends BaseRestClient {
-    @RestClient(method = HttpMethod.GET)
+    @RestClient(method = HttpMethod.GET,path = "http://localhost:8080/get/{id}")
     UserInfo getUser(@PathParam(value = "id") String id);
     @RestClient(method = HttpMethod.POST)
     UserInfo postUser(@PathParam(value = "id") String id,@FormBody UserForm form);
