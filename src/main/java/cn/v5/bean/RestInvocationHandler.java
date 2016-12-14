@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by zhiguodeng on 2016/12/13.
@@ -91,7 +92,7 @@ public class RestInvocationHandler implements InvocationHandler {
             field.setAccessible(true);
             Object value=field.get(arg);
             String name = param != null ? param.value() : field.getName();
-            if(field.getType().isArray()){
+            if(field.getType().isArray() && field.getType()!=byte[].class){
                 for(int i=0;i< Array.getLength(value);i++){
                     Object arrayValue=Array.get(value,i);
                     object2Form(name,arrayValue,body);
@@ -105,7 +106,12 @@ public class RestInvocationHandler implements InvocationHandler {
     private void object2Form(String name,Object arg, MultiValueMap<String, Object> body){
         if(arg==null) return;
         if(arg.getClass()==byte[].class){
-            body.add(name,new ByteArrayResource((byte[])arg));
+            body.add(name,new ByteArrayResource((byte[])arg){
+                @Override
+                public String getFilename() {
+                    return UUID.randomUUID().toString();
+                }
+            });
         }else if(arg.getClass()==File.class){
             body.add(name,new FileSystemResource((File)arg));
         }else{
