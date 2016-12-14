@@ -1,4 +1,4 @@
-package cn.v5;
+package cn.v5.forms;
 
 import cn.v5.annotations.Param;
 import lombok.AllArgsConstructor;
@@ -15,10 +15,10 @@ import java.io.File;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserFormWithByteArray {
+public class UserFormWithFile {
     @Param("name")
     private String name;
     private String[] tags;
-    private byte[] avatar;
-    private byte[][] album;
+    private File avatar;
+    private File[] album;
 }

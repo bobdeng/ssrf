@@ -1,4 +1,4 @@
-package cn.v5;
+package cn.v5.forms;
 
 import cn.v5.annotations.Param;
 import lombok.AllArgsConstructor;

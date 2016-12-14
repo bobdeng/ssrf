@@ -2,6 +2,9 @@ package cn.v5;
 
 import cn.v5.annotations.*;
 import cn.v5.bean.BaseRestClient;
+import cn.v5.forms.UserForm;
+import cn.v5.forms.UserFormWithByteArray;
+import cn.v5.forms.UserFormWithFile;
 import cn.v5.model.UserInfo;
 import org.springframework.http.HttpMethod;
 

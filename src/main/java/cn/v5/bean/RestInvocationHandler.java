@@ -43,23 +43,18 @@ public class RestInvocationHandler implements InvocationHandler {
     private Object http(RestClient client, Method method, Object[] args) {
         switch(client.method()){
             case DELETE:
-                break;
+                return doGet(client,method,args);
             case GET:
                 return doGet(client,method,args);
             case POST:
-                try{
-                    return doPost(client,method,args);
-                }catch (Exception e){
-                    return null;
-                }
+                return doPost(client,method,args);
             case PATCH:
-                break;
+                return doPost(client,method,args);
             case PUT:
-                break;
+                return doPost(client,method,args);
             default:
                 return doGet(client, method, args);
         }
-        return null;
     }
 
     private Object doGet(RestClient client, Method method, Object[] args) {
@@ -69,7 +64,7 @@ public class RestInvocationHandler implements InvocationHandler {
         ResponseEntity responseEntity= restTemplate.exchange(builder.build().encode().toString(), client.method(),httpEntity,method.getReturnType(),args);
         return  responseEntity.getBody();
     }
-    private Object doPost(RestClient client, Method method, Object[] args) throws Exception {
+    private Object doPost(RestClient client, Method method, Object[] args)  {
         UriComponentsBuilder builder = rebuildUrl(method, args);
         HttpHeaders headers=getHeaders(method, args);
         headers.setContentType(client.hasFile()?MediaType.MULTIPART_FORM_DATA:MediaType.APPLICATION_FORM_URLENCODED);
@@ -84,23 +79,26 @@ public class RestInvocationHandler implements InvocationHandler {
         return restTemplate.exchange(builder.build().encode().toString(),client.method(),httpEntity,method.getReturnType()).getBody();
     }
 
-    private void objectsToForm(Object arg, MultiValueMap<String, Object> body) throws Exception{
+    private void objectsToForm(Object arg, MultiValueMap<String, Object> body){
         if(arg==null) return;
-        Field[] fields=arg.getClass().getDeclaredFields();
-        for(Field field:fields){
-            Param param=field.getAnnotation(Param.class);
-            field.setAccessible(true);
-            Object value=field.get(arg);
-            String name = param != null ? param.value() : field.getName();
-            if(field.getType().isArray() && field.getType()!=byte[].class){
-                for(int i=0;i< Array.getLength(value);i++){
-                    Object arrayValue=Array.get(value,i);
-                    object2Form(name,arrayValue,body);
+        try {
+            Field[] fields = arg.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                Param param = field.getAnnotation(Param.class);
+                field.setAccessible(true);
+                Object value = field.get(arg);
+                String name = param != null ? param.value() : field.getName();
+                if (field.getType().isArray() && field.getType() != byte[].class) {
+                    for (int i = 0; i < Array.getLength(value); i++) {
+                        Object arrayValue = Array.get(value, i);
+                        object2Form(name, arrayValue, body);
+                    }
+                } else {
+                    object2Form(name, value, body);
                 }
             }
-            else {
-                object2Form(name,value,body);
-            }
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
     }
     private void object2Form(String name,Object arg, MultiValueMap<String, Object> body){
