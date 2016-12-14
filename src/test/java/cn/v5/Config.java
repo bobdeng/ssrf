@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -25,8 +26,8 @@ public class Config
     }
     @Bean
     public RestTemplate restTemplate(){
-
-        return new RestTemplateBuilder().additionalMessageConverters(new MyJsonConverter())
+        return new RestTemplateBuilder()
+                .additionalMessageConverters(new MappingJackson2HttpMessageConverter())
                 .additionalMessageConverters(new FormHttpMessageConverter()).build();
     }
 }

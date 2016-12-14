@@ -7,9 +7,10 @@
    	 }
     @Bean
     public RestTemplate restTemplate(){
-	
-        return new RestTemplateBuilder().additionalMessageConverters(new MyJsonConverter())
+        return new RestTemplateBuilder()
+                .additionalMessageConverters(new MappingJackson2HttpMessageConverter())
                 .additionalMessageConverters(new FormHttpMessageConverter()).build();
+
     }
 #REST client interface
 	public interface ITestRest extends BaseRestClient
