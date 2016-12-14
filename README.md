@@ -1,4 +1,6 @@
 # Simple Spring RestTemplate Framework
+#TestServer 
+java -jar restdemo.jar
 #Spring bean
 	@Bean
     public ITestRest testRest(RestTemplate restTemplate){

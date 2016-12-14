@@ -5,9 +5,16 @@
 
 	<groupId>cn.v5</groupId>
 	<artifactId>simplerest</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-
+	<distributionManagement>
+		<repository>
+			<id>oss</id>
+			<name>release</name>
+			<uniqueVersion>true</uniqueVersion>
+			<url></url>
+		</repository>
+	</distributionManagement>
 	<name>simplerest</name>
 	<description>a simple spring REST client</description>
 
