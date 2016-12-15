@@ -1,6 +1,10 @@
 # Simple Spring RestTemplate Framework
-#TestServer 
-java -jar restdemo.jar
+#Maven
+	<dependency>
+			<groupId>com.github.bobdeng</groupId>
+			<artifactId>ssrf</artifactId>
+			<version>1.0.1</version>
+	</dependency>
 #Spring bean
 	@Bean
     public ITestRest testRest(RestTemplate restTemplate){
