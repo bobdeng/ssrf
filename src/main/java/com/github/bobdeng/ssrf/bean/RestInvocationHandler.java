@@ -56,10 +56,9 @@ public class RestInvocationHandler implements InvocationHandler {
     }
 
     private Object doGet(RestClient client, Method method, Object[] args) {
-        UriComponentsBuilder builder = rebuildUrl(client,method, args);
         HttpHeaders headers=getHeaders(method, args);
         HttpEntity httpEntity=new HttpEntity(headers);
-        ResponseEntity responseEntity= restTemplate.exchange(builder.build().encode().toString(), client.method(),httpEntity,method.getReturnType(),args);
+        ResponseEntity responseEntity= restTemplate.exchange(rebuildUrl(client,method, args), client.method(),httpEntity,method.getReturnType(),args);
         Object result=  responseEntity.getBody();
         setResultHttpCode(result,responseEntity.getStatusCodeValue());
         return result;
@@ -75,7 +74,6 @@ public class RestInvocationHandler implements InvocationHandler {
         }
     }
     private Object doPost(RestClient client, Method method, Object[] args)  {
-        UriComponentsBuilder builder = rebuildUrl(client,method, args);
         HttpHeaders headers=getHeaders(method, args);
         //only post support multipart/form-data
         headers.setContentType((client.hasFile() && client.method()==HttpMethod.POST)?MediaType.MULTIPART_FORM_DATA:MediaType.APPLICATION_FORM_URLENCODED);
@@ -87,7 +85,7 @@ public class RestInvocationHandler implements InvocationHandler {
             }
         }
         HttpEntity<MultiValueMap<String,String>> httpEntity=new HttpEntity(body,headers);
-        ResponseEntity responseEntity=  restTemplate.exchange(builder.build().encode().toString(),client.method(),httpEntity,method.getReturnType());
+        ResponseEntity responseEntity=  restTemplate.exchange(rebuildUrl(client,method, args),client.method(),httpEntity,method.getReturnType());
         Object result=  responseEntity.getBody();
         setResultHttpCode(result,responseEntity.getStatusCodeValue());
         return result;
@@ -142,7 +140,7 @@ public class RestInvocationHandler implements InvocationHandler {
         return requestHeaders;
     }
 
-    private UriComponentsBuilder rebuildUrl(RestClient client,Method method, Object[] args) {
+    private String rebuildUrl(RestClient client,Method method, Object[] args) {
         String url = StringUtils.isEmpty(client.path())?this.url.get():client.path();
         for(int i=0;i<args.length;i++){
             PathParam pathParam=findAnnotation(PathParam.class,method.getParameterAnnotations()[i]);
@@ -157,7 +155,7 @@ public class RestInvocationHandler implements InvocationHandler {
                 builder.queryParam(param.value(),args[i]==null?"":args[i].toString());
             }
         }
-        return builder;
+        return builder.build().encode().toString();
     }
 
     private Object[] getVaribles(Object[] args) {
