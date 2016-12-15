@@ -3,16 +3,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>cn.v5</groupId>
-	<artifactId>simplerest</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<groupId>com.github.bobdeng</groupId>
+	<artifactId>ssrf</artifactId>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 	<distributionManagement>
 		<repository>
 			<id>oss</id>
 			<name>release</name>
 			<uniqueVersion>true</uniqueVersion>
-			<url></url>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
 	</distributionManagement>
 	<name>simplerest</name>

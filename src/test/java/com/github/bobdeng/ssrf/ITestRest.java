@@ -1,11 +1,13 @@
-package cn.v5;
+package com.github.bobdeng.ssrf;
 
-import cn.v5.annotations.*;
-import cn.v5.bean.BaseRestClient;
-import cn.v5.forms.UserForm;
-import cn.v5.forms.UserFormWithByteArray;
-import cn.v5.forms.UserFormWithFile;
-import cn.v5.model.UserInfo;
+import com.github.bobdeng.ssrf.annotations.FormBody;
+import com.github.bobdeng.ssrf.bean.BaseRestClient;
+import com.github.bobdeng.ssrf.forms.UserForm;
+import com.github.bobdeng.ssrf.forms.UserFormWithByteArray;
+import com.github.bobdeng.ssrf.forms.UserFormWithFile;
+import com.github.bobdeng.ssrf.model.UserInfo;
+import com.github.bobdeng.ssrf.annotations.PathParam;
+import com.github.bobdeng.ssrf.annotations.RestClient;
 import org.springframework.http.HttpMethod;
 
 /**
@@ -14,7 +16,7 @@ import org.springframework.http.HttpMethod;
 public interface ITestRest extends BaseRestClient {
     @RestClient(method = HttpMethod.GET,path = "http://localhost:8080/get/{id}")
     UserInfo getUser(@PathParam(value = "id") String id);
-    @RestClient(method = HttpMethod.POST)
+    @RestClient(method = HttpMethod.POST,path = "http://localhost:8080/post/{id}")
     UserInfo postUser(@PathParam(value = "id") String id,@FormBody UserForm form);
     @RestClient(method = HttpMethod.POST,hasFile = true)
     UserInfo postUserWithFile(@PathParam(value = "id") String id,@FormBody UserFormWithFile form);

@@ -1,4 +1,4 @@
-package cn.v5;
+package com.github.bobdeng.ssrf;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

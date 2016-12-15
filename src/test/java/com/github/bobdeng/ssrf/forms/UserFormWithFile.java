@@ -1,6 +1,6 @@
-package cn.v5.forms;
+package com.github.bobdeng.ssrf.forms;
 
-import cn.v5.annotations.Param;
+import com.github.bobdeng.ssrf.annotations.Param;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

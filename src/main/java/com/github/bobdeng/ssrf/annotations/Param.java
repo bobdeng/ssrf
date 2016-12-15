@@ -1,4 +1,4 @@
-package cn.v5.annotations;
+package com.github.bobdeng.ssrf.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

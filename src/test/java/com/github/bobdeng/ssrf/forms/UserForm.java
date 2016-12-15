@@ -1,12 +1,10 @@
-package cn.v5.forms;
+package com.github.bobdeng.ssrf.forms;
 
-import cn.v5.annotations.Param;
+import com.github.bobdeng.ssrf.annotations.Param;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.File;
 
 /**
  * Created by zhiguodeng on 2016/12/13.
@@ -15,10 +13,8 @@ import java.io.File;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserFormWithByteArray {
+public class UserForm {
     @Param("name")
     private String name;
     private String[] tags;
-    private byte[] avatar;
-    private byte[][] album;
 }

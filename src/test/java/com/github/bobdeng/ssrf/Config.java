@@ -1,15 +1,10 @@
-package cn.v5;
+package com.github.bobdeng.ssrf;
 
-import cn.v5.bean.RestClientBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.BeanFactory;
+import com.github.bobdeng.ssrf.bean.RestClientBuilder;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.FormHttpMessageConverter;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 

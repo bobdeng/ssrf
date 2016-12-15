@@ -1,4 +1,4 @@
-package cn.v5.annotations;
+package com.github.bobdeng.ssrf.annotations;
 
 import org.springframework.http.HttpMethod;
 

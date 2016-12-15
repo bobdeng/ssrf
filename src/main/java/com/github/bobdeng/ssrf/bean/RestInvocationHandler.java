@@ -1,10 +1,9 @@
-package cn.v5.bean;
+package com.github.bobdeng.ssrf.bean;
 
-import cn.v5.annotations.*;
+import com.github.bobdeng.ssrf.annotations.*;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
-import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -17,8 +16,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**

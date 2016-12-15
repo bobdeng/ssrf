@@ -1,4 +1,4 @@
-package cn.v5.bean;
+package com.github.bobdeng.ssrf.bean;
 
 /**
  * Created by zhiguodeng on 2016/12/13.

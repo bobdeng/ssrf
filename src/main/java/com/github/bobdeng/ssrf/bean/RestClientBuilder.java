@@ -1,4 +1,4 @@
-package cn.v5.bean;
+package com.github.bobdeng.ssrf.bean;
 
 import org.springframework.web.client.RestTemplate;
 
