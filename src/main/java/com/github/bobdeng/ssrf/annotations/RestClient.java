@@ -16,4 +16,5 @@ public @interface RestClient {
     HttpMethod method();
     String path() default "";
     boolean hasFile() default false;
+    boolean jsonBody() default false;
 }

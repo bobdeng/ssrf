@@ -65,6 +65,13 @@ public class SimplerestApplicationTests {
 				assertEquals(user.getTags(), new String[]{"music", "movie"});
 	}
 	@Test
+	public void testPostUseJson() {
+		UserInfo user = testRest.postUserUseJson("123456", UserForm.builder().tags(new String[]{"music", "movie"}).name("bobdeng_post").build());
+		assertNotNull(user);
+		assertEquals(user.getName(), "bobdeng_post");
+		assertEquals(user.getTags(), new String[]{"music", "movie"});
+	}
+	@Test
 	public void testPostWithFile() {
 		testRest.setUrl("http://localhost:8080/postWithFile/{id}");
 		UserInfo user=testRest.postUserWithFile("123456", UserFormWithFile.builder()

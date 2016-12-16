@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 /**
  * Created by zhiguodeng on 2016/12/13.
@@ -74,20 +75,43 @@ public class RestInvocationHandler implements InvocationHandler {
         }
     }
     private Object doPost(RestClient client, Method method, Object[] args)  {
-        HttpHeaders headers=getHeaders(method, args);
+        if(client.jsonBody()){
+            return doPostUseJson(client,method,args);
+        }else {
+            HttpHeaders headers = getHeaders(method, args);
+            //only post support multipart/form-data
+            headers.setContentType((client.hasFile() && client.method() == HttpMethod.POST) ? MediaType.MULTIPART_FORM_DATA : MediaType.APPLICATION_FORM_URLENCODED);
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            for (int i = 0; i < args.length; i++) {
+                FormBody formBody = findAnnotation(FormBody.class, method.getParameterAnnotations()[i]);
+                if (formBody != null) {
+                    objectsToForm(args[i], body);
+                }
+            }
+            HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity(body, headers);
+            ResponseEntity responseEntity = restTemplate.exchange(rebuildUrl(client, method, args), client.method(), httpEntity, method.getReturnType());
+            Object result = responseEntity.getBody();
+            setResultHttpCode(result, responseEntity.getStatusCodeValue());
+            return result;
+        }
+    }
+
+    private Object doPostUseJson(RestClient client, Method method, Object[] args) {
+        HttpHeaders headers = getHeaders(method, args);
         //only post support multipart/form-data
-        headers.setContentType((client.hasFile() && client.method()==HttpMethod.POST)?MediaType.MULTIPART_FORM_DATA:MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String,Object> body=new LinkedMultiValueMap<>();
-        for(int i=0;i<args.length;i++){
-            FormBody formBody=findAnnotation(FormBody.class,method.getParameterAnnotations()[i]);
-            if(formBody!=null){
-                objectsToForm(args[i],body);
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        Object body=null;
+        for (int i = 0; i < args.length; i++) {
+            FormBody formBody = findAnnotation(FormBody.class, method.getParameterAnnotations()[i]);
+            if (formBody != null) {
+                body =  args[i];
+                break;
             }
         }
-        HttpEntity<MultiValueMap<String,String>> httpEntity=new HttpEntity(body,headers);
-        ResponseEntity responseEntity=  restTemplate.exchange(rebuildUrl(client,method, args),client.method(),httpEntity,method.getReturnType());
-        Object result=  responseEntity.getBody();
-        setResultHttpCode(result,responseEntity.getStatusCodeValue());
+        HttpEntity<Object> httpEntity = new HttpEntity(body,headers);
+        ResponseEntity responseEntity = restTemplate.exchange(rebuildUrl(client, method, args), client.method(), httpEntity, method.getReturnType());
+        Object result = responseEntity.getBody();
+        setResultHttpCode(result, responseEntity.getStatusCodeValue());
         return result;
     }
 

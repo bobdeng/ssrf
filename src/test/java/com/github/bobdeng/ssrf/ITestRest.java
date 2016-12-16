@@ -24,4 +24,13 @@ public interface ITestRest extends BaseRestClient {
     UserInfo postUserWithByteArray(@PathParam(value = "id") String id,@FormBody UserFormWithByteArray form);
     @RestClient(method = HttpMethod.PUT,hasFile = false)
     UserInfo putUser(@PathParam(value = "id") String id,@FormBody UserForm form);
+
+    /**
+     * Post put patch，body use json.
+     * @param id
+     * @param form
+     * @return
+     */
+    @RestClient(method = HttpMethod.POST,path = "http://localhost.charlesproxy.com:8080/postUseJson/{id}",jsonBody = true)
+    UserInfo postUserUseJson(@PathParam(value = "id") String id,@FormBody UserForm form);
 }
